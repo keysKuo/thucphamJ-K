@@ -1,0 +1,62 @@
+<div class="container">
+    <section id="dish">
+        <div class="two alt-two">
+            <h1>Menu món ăn
+                <span>Hải sản Cô Năm Sài gòn</span>
+            </h1>
+        </div>
+        <div id="list-dish" class="row mt-5">
+        </div>
+    </section>
+</div>
+
+<script>
+    const listDish = document.getElementById('list-dish');
+    renderDish()
+
+    function renderDish() {
+        $.ajax({
+            url: "/food/dish",
+            type: 'GET',
+            dataType: 'json',
+            success: function (data, textStatus, xhr) {
+                if (data) {
+                    const list = data.listDish;
+                    listDish.innerHTML = ``;
+                    list.forEach(item => {
+                        let priceHtml = `Giá: ${item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}`;
+                        if (item.price == 0)
+                            priceHtml = `Giá: Theo thời giá`;
+                        listDish.innerHTML += `
+                        <div class="col-md-3 col-sm-4 col-xs-6 seafood-box-2">
+                            <div class="seafood-img-box">
+                                <img src="${item.image}" alt="">
+                            </div>
+
+                            <div class="seafood-content-box">
+                                <a href="" class="seafood-title title-menu">${item.name}</a>
+
+                                <div class="seafood-price">
+                                    ${priceHtml}
+                                </div>
+
+                                <div class="seafood-contact">
+                                    Liên hệ:
+                                    0931 744 468
+                                </div>
+
+                                <div class="seafood-buy smooth">
+                                    <a href="/food/${item.slug}">Mua hàng</a>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+        });
+    }
+
+</script>

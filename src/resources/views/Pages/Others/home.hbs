@@ -1,0 +1,282 @@
+<div class="slides">
+    {{!-- Banner --}}
+    <section id="banner">
+        <video width="100%" autoplay muted loop id="myVideo">
+            <source src="{{video}}" type="video/mp4">
+        </video>
+    </section>
+
+    {{!-- Best Seller --}}
+    <section id="bestseller">
+        <div class="box-mid">
+            <div class="container">
+                <div class="two alt-two">
+                    <h1 style="color: #EB1D36">Best seller
+                        <span>Hải sản Cô Năm Sài gòn</span>
+                        <div class="icon"></div>
+                    </h1>
+                </div>
+                <div class="owl-carousel cs-4 owl-theme">
+                    {{#each menuList}}
+                    <div class="item bestseller-box"><img src="{{image}}" alt="">
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{!-- Seafood --}}
+    <section id="seafood">
+        <div class="box-mid">
+            <div class="container">
+                <div class="two alt-two">
+                    <h1 style="color: #40DFEF">Hải sản tươi sống
+                        <span>Hải sản Cô Năm Sài gòn</span>
+                        <div class="icon"></div>
+                    </h1>
+                </div>
+
+                <div class="row">
+                    <div id="list-seafood" class="list-seafood col-md-10 mt-2">
+                    </div>
+
+                    <div class="col-md-2 seafood-right-banner mt-2">
+                        <img width="100%" src="/img/right-banner.png" alt="">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{!-- Menu --}}
+    <section id="menu">
+        <div class="box-mid">
+            <div class="container">
+                <div class="two alt-two">
+                    <h1 style="color: #82DBD8">Thực đơn món chính
+                        <span>Hải sản Cô Năm Sài gòn</span>
+                        <div class="icon"></div>
+                    </h1>
+                </div>
+
+
+                <div id="list-menu" class="owl-carousel cs-4 owl-theme ">
+                    {{#each menuList}}
+                    <div class="item">
+                        <img src="{{image}}" alt="">
+                    </div>
+                    {{/each}}
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {{!-- Album --}}
+    <section id="album">
+        <div class="box-mid">
+            <div class="container">
+                <div class="two alt-two">
+                    <h1 style="color: #FFE69A">Album
+                        <span>Hải sản Cô Năm Sài gòn</span>
+                        <div class="icon"></div>
+                    </h1>
+                </div>
+
+                <div class="album-main-box">
+                    <div id="list-album1" class="owl-carousel cs-5 owl-theme mt-3">
+
+                    </div>
+
+                    <div id="list-album2" class="owl-carousel cs-5 owl-theme">
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </section>
+
+    {{!-- News --}}
+    <section id="news">
+        <div class="box-mid">
+            <div class="container">
+                <div class="two alt-two">
+                    <h1 style="color: #333C83">Tin tức - Sự kiện
+                        <span>Hải sản Cô Năm Sài gòn</span>
+                        <div class="icon"></div>
+                    </h1>
+                </div>
+
+                <div id="list-news" class="owl-carousel owl-theme mt-5">
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="footer">
+        {{> footer}}
+    </section>
+
+
+
+</div>
+
+<script>
+
+    var mySlider = slider('.slides');
+    const listSeafood = document.getElementById('list-seafood');
+    const listMenu = document.getElementById('list-menu');
+
+    $(document).ready(() => {
+        renderSeafood();
+        renderAlbum();
+        renderNews();
+    })
+    function renderSeafood() {
+        $.ajax({
+            url: `/seafood/all`,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data, textStatus, xhr) {
+                if (data.seaFoodList) {
+                    listSeafood.innerHTML = ``;
+                    const list = data.seaFoodList
+                    list.forEach((item, index) => {
+                        if (index < 8) {
+                            let priceHtml = `<span style="text-decoration: line-through;">Giá bán: ${item.price[0].originPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span><br> Giá khuyến mãi:
+                                        ${item.price[0].discountPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}`;
+                            if (Number(item.price[0].discountPrice) == 0)
+                                priceHtml = `<span style="text-decoration: line-through;"> </span><br> Giá bán:
+                                        Theo thời giá`;
+                            if (index >= 4) {
+                                listSeafood.innerHTML += `<div class="col-lg-4 col-sm-4 seafood-box last-seafood">
+                            <span class="sale">-${item.price[0].discountPercent}%</span>
+                            <div class="seafood-img-box">
+                                <img src="${item.avatar}" alt="">
+                            </div>
+
+                            <div class="seafood-content-box">
+                                <a href="/seafood/${item.slug}" class="seafood-title">${item.name}</a>
+
+                                <div class="seafood-price">
+                                        ${priceHtml}
+                                    </div>
+
+                                <div class="seafood-buy smooth">
+                                    <a href="/seafood/${item.slug}">Thưởng thức ngay</a>
+                                </div>
+                            </div>
+                        </div>`;
+                            } else {
+                                listSeafood.innerHTML += `<div class="col-lg-4 col-sm-4 seafood-box">
+                            <span class="sale">-${item.price[0].discountPercent}%</span>
+                            <div class="seafood-img-box">
+                                <img src="${item.avatar}" alt="">
+                            </div>
+
+                            <div class="seafood-content-box">
+                                <a href="/seafood/${item.slug}" class="seafood-title">${item.name}</a>
+
+                                <div class="seafood-price">
+                                        ${priceHtml}
+                                    </div>
+
+                                <div class="seafood-buy smooth">
+                                    <a href="/seafood/${item.slug}">Thưởng thức ngay</a>
+                                </div>
+                            </div>
+                        </div>`;
+                            }
+                        }
+                    })
+
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+        });
+    }
+    function renderMenu() {
+        $.ajax({
+            url: '/menu/all',
+            type: 'GET',
+            contentType: 'json',
+            success: function (data, textStatus, xhr) {
+                if (data.menuList) {
+                    const list = data.menuList;
+                    list.forEach(item => {
+                        $('#list-menu').append(`<div class="item"><img src="${item.image}" alt="">
+                    </div>`);
+                    })
+                }
+            }
+        })
+    }
+    function renderAlbum() {
+        $.ajax({
+            url: '/album/list',
+            type: 'GET',
+            contentType: 'json',
+            success: (data, textStatus, xhr) => {
+                if (data.listAlbum) {
+                    const list = data.listAlbum;
+                    list.forEach((item, index) => {
+                        if (index < list.length / 2) {
+                            $('#list-album1').trigger('add.owl.carousel', ['<div class="item"> <img src ="' + item.url + '"> </div>'])
+                                .trigger('refresh.owl.carousel');
+                        } else {
+                            $('#list-album2').trigger('add.owl.carousel', ['<div class="item"> <img src ="' + item.url + '"> </div>'])
+                                .trigger('refresh.owl.carousel');
+                        }
+                    })
+                }
+
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+        })
+    }
+    function renderNews() {
+        $.ajax({
+            url: '/news/list',
+            type: 'GET',
+            contentType: 'json',
+            success: (data, textStatus, xhr) => {
+                if (data.listNews) {
+                    const list = data.listNews;
+                    list.forEach((item, index) => {
+                        $('#list-news').trigger('add.owl.carousel', [`<div class="item new-box">
+                        <div class="news-img-box">
+                            <img src="${item.image}" alt="">
+                        </div>
+
+                        <div class="news-content-box">
+                            <div class="news-title-box">
+                                <a class="news-title" href="/news/detail/${item.slug}" alt="">${item.title}</a>
+
+                            </div>
+                            <div class="is-divider"></div>
+                            <p>${item.subtitle}</p>
+                            <a href="/news/detail/${item.slug}" class="watch-detail px-3 py-2">Xem thêm</a>
+                        </div>
+                    </div>`])
+                            .trigger('refresh.owl.carousel');
+                    })
+                }
+
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+        })
+    }
+
+</script>
